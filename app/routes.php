@@ -50,14 +50,15 @@ return function (App $app) {
 
         // Cria o admin
         $stmt = $pdo->prepare("
-            INSERT INTO users (username, email, password, level)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO users (username, email, password, level, data)
+            VALUES (?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $username,
             $email,
             password_hash($password, PASSWORD_DEFAULT),
-            5
+            5,
+            json_encode([])
         ]);
 
         $response->getBody()->write(json_encode(['success' => true, 'message' => 'Admin criado com sucesso.']));

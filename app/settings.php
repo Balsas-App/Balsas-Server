@@ -22,10 +22,10 @@ return function (ContainerBuilder $containerBuilder) {
                     'level' => Logger::DEBUG,
                 ],
                 'db' => [
-                    'host' => '127.0.0.1',
-                    'dbname' => 'balsas_v2',
-                    'user' => 'root',
-                    'pass' => '',
+                    'host' => getenv('DB_HOST'),
+                    'dbname' => getenv('DB_DATABASE'),
+                    'user' => getenv('DB_USERNAME'),
+                    'pass' => getenv('DB_PASSWORD'),
                     'charset' => 'utf8mb4',
                 ],
             ]);
