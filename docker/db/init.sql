@@ -2,54 +2,72 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
---
--- Estrutura da tabela `refresh_tokens`
---
-
 DROP TABLE IF EXISTS `refresh_tokens`;
-CREATE TABLE IF NOT EXISTS `refresh_tokens` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `token` varchar(512) COLLATE utf8mb4_general_ci NOT NULL,
+CREATE TABLE `refresh_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(512) NOT NULL,
   `expires_at` datetime DEFAULT NULL,
-  `revoked` tinyint(1) DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `revoked` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `tokens`
---
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `tokens`;
-CREATE TABLE IF NOT EXISTS `tokens` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `token` varchar(512) COLLATE utf8mb4_general_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE `tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(512) NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   `expires_at` datetime DEFAULT NULL,
-  `revoked` tinyint(1) DEFAULT '0',
+  `revoked` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
---
--- Estrutura da tabela `users`
---
 
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `level` int NOT NULL DEFAULT '1',
-  `data` json NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `level` int(11) NOT NULL DEFAULT 1,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`data`)),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+DROP TABLE IF EXISTS `vehicle_categories`;
+CREATE TABLE `vehicle_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+DROP TABLE IF EXISTS `vehicles`;
+CREATE TABLE `vehicles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `category` int(11) DEFAULT NULL,
+  `tax` double NOT NULL DEFAULT 0,
+  `uses` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `fk_vehicle_category` (`category`),
+  CONSTRAINT `fk_vehicle_category` FOREIGN KEY (`category`) REFERENCES `vehicle_categories` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+DROP TABLE IF EXISTS `ferries`;
+CREATE TABLE `ferries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT 1,
+  `owner` int(10) unsigned DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `fk_ferries_owner` (`owner`),
+  CONSTRAINT `fk_ferries_owner` FOREIGN KEY (`owner`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 COMMIT;
