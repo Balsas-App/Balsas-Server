@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Middleware\SessionMiddleware;
-use App\Middleware\DbMiddleware;
+use App\Application\Middleware\DbMiddleware;
 use Slim\App;
 
 return function (App $app, $container) {
