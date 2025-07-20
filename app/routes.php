@@ -14,6 +14,8 @@ use App\Application\Actions\User\AddUserAction;
 use App\Application\Actions\User\LoginAction;
 use App\Application\Actions\User\RefreshTokenAction;
 use App\Application\Actions\User\ListUsersAction;
+use App\Application\Actions\Ferry\AddFerryAction;
+use App\Application\Actions\Vehicle\ListVehiclesAction;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
@@ -35,4 +37,8 @@ return function (App $app) {
     $app->get('/users', ListUsersAction::class)->add(new AuthMiddleware());
 
     $app->post('/users', AddUserAction::class)->add(new AuthMiddleware(5));
+
+    $app->post('/ferries', AddFerryAction::class)->add(new AuthMiddleware(5));
+
+    $app->get('/vehicles', ListVehiclesAction::class)->add(new AuthMiddleware());
 };
