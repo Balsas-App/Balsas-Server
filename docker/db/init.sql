@@ -60,7 +60,7 @@ CREATE TABLE `vehicles` (
 
 DROP TABLE IF EXISTS `ferries`;
 CREATE TABLE `ferries` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
   `owner` int(10) unsigned DEFAULT NULL,
@@ -68,6 +68,28 @@ CREATE TABLE `ferries` (
   PRIMARY KEY (`id`),
   KEY `fk_ferries_owner` (`owner`),
   CONSTRAINT `fk_ferries_owner` FOREIGN KEY (`owner`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+DROP TABLE IF EXISTS `ferry_routes`;
+CREATE TABLE `ferry_routes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `route` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+DROP TABLE IF EXISTS `boardings`;
+CREATE TABLE `boardings` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ferry` int(10) unsigned DEFAULT NULL,
+  `route` int(10) unsigned DEFAULT NULL,
+  `init_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `departure_time` timestamp NULL DEFAULT NULL,
+  `closed` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `fk_ferry_route` (`route`),
+  KEY `fk_ferry` (`ferry`),
+  CONSTRAINT `fk_ferry` FOREIGN KEY (`ferry`) REFERENCES `ferries` (`id`),
+  CONSTRAINT `fk_ferry_route` FOREIGN KEY (`route`) REFERENCES `ferry_routes` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 COMMIT;
