@@ -1,37 +1,52 @@
 version: "3.7"
 
 volumes:
-    logs:
-    db_data:
+  logs:
+  db_data:
 
 services:
-    slim:
-        build: .
-        working_dir: /var/www
-        command: php -S 0.0.0.0:8080 -t public
-        ports:
-            - "8080:8080"
-        volumes:
-            - .:/var/www
-            - logs:/var/www/logs
-        depends_on:
-            - db
-        environment:
-            DB_HOST: db
-            DB_DATABASE: app
-            DB_USERNAME: user
-            DB_PASSWORD: secret
+  slim:
+    build: .
+    working_dir: /var/www
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_DATABASE: app
+      DB_USERNAME: user
+      DB_PASSWORD: secret
+    profiles:
+      - prod
 
-    db:
-        image: mariadb:11
-        restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: app
-            MYSQL_USER: user
-            MYSQL_PASSWORD: secret
-        volumes:
-            - db_data:/var/lib/mysql
-            - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-        ports:
-            - "3307:3306"
+  slim-dev:
+    build: .
+    working_dir: /var/www
+    command: php -S 0.0.0.0:8080 -t public
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/var/www
+      - logs:/var/www/logs
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_DATABASE: app
+      DB_USERNAME: user
+      DB_PASSWORD: secret
+
+  db:
+    image: mariadb:11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3307:3306"
