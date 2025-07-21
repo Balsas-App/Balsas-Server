@@ -15,7 +15,9 @@ use App\Application\Actions\User\LoginAction;
 use App\Application\Actions\User\RefreshTokenAction;
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\Ferry\AddFerryAction;
+use App\Application\Actions\Ferry\ListFerriesAction;
 use App\Application\Actions\Vehicle\ListVehiclesAction;
+use App\Application\Actions\Boarding\InitBoardingAction;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
@@ -35,10 +37,12 @@ return function (App $app) {
     $app->post('/login', LoginAction::class);
 
     $app->get('/users', ListUsersAction::class)->add(new AuthMiddleware());
-
     $app->post('/users', AddUserAction::class)->add(new AuthMiddleware(5));
 
+    $app->get('/ferries', ListFerriesAction::class)->add(new AuthMiddleware());
     $app->post('/ferries', AddFerryAction::class)->add(new AuthMiddleware(5));
 
     $app->get('/vehicles', ListVehiclesAction::class)->add(new AuthMiddleware());
+
+    $app->post('/boardings', InitBoardingAction::class)->add(new AuthMiddleware());
 };
