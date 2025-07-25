@@ -21,11 +21,20 @@ class CreateCheckinAction {
         $observation = trim($data['observation'] ?? '');
         $add_value_reason = trim($data['add_value_reason'] ?? '');
 
-        if (!$boarding) {
-            return $this->error($response, 'ID de embarque é obrigatório.');
+        if (!$boarding || !$plate) {
+            return $this->error($response, 'ID de embarque e placa são obrigatórios.');
         }
 
         try {
+            // Verifica se já existe check-in com a mesma placa nesse embarque
+            $check = $pdo->prepare("SELECT id FROM checkins WHERE boarding = ? AND plate = ?");
+            $check->execute([$boarding, $plate]);
+
+            if ($check->fetch()) {
+                return $this->error($response, 'Veículo '.$plate.' já embarcado.', 409);
+            }
+
+            // Executa o INSERT normalmente
             $stmt = $pdo->prepare("
                 INSERT INTO checkins (`boarding`, `plate`, `pax`, `vehicle`, `value`, `add_value`, `observation`, `add_value_reason`)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
