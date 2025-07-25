@@ -19,6 +19,11 @@ use App\Application\Actions\Ferry\ListFerriesAction;
 use App\Application\Actions\Vehicle\ListVehiclesAction;
 use App\Application\Actions\Boarding\InitBoardingAction;
 use App\Application\Actions\Boarding\ListRoutesAction;
+use App\Application\Actions\Boarding\ListBoardingsAction;
+use App\Application\Actions\Boarding\GetBoardingAction;
+use App\Application\Actions\Checkin\CreateCheckinAction;
+use App\Application\Actions\Checkin\ListCheckinsByBoardingAction;
+use App\Application\Actions\Checkin\GetCheckinInfoAction;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
@@ -47,4 +52,20 @@ return function (App $app) {
 
     $app->post('/boardings', InitBoardingAction::class)->add(new AuthMiddleware());
     $app->get('/boardings/routes', ListRoutesAction::class)->add(new AuthMiddleware());
+
+    
+    $app->group('', function (Group $group) {
+        // Listar boardings (com filtro de data opcional ?start=...&end=...)
+        $group->get('/boardings', ListBoardingsAction::class);
+        $group->get('/boardings/{id}', GetBoardingAction::class);
+
+        // Criar novo check-in
+        $group->post('/checkins', CreateCheckinAction::class);
+
+        // Listar check-ins de um boarding específico
+        $group->get('/boardings/{boarding_id}/checkins', ListCheckinsByBoardingAction::class);
+
+        // Obter detalhes de um check-in específico
+        $group->get('/checkins/{id}', GetCheckinInfoAction::class);
+    })->add(new AuthMiddleware());
 };

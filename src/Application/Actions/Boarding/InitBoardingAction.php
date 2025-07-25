@@ -22,23 +22,26 @@ class InitBoardingAction {
             return $this->error($response, 'Campos obrigatórios ausentes.');
         }
 
-        // Verifica se balsa já existe
-        $stmt = $pdo->prepare('SELECT id FROM boardings WHERE `ferry` = ? LIMIT 1');
+        // Verifica se balsa já tem embarque aberto (sem horário de saída)
+        $stmt = $pdo->prepare("
+            SELECT b.id as boarding_id, b.init_time as time_in, f.name as ferry_name, r.route as route_name
+            FROM boardings b
+            JOIN ferries f ON b.ferry = f.id
+            JOIN ferry_routes r ON b.route = r.id
+            WHERE b.ferry = ? AND b.departure_time IS NULL
+            LIMIT 1
+        ");
         $stmt->execute([$ferry]);
-        $exists = $stmt->fetch();
+        $exists = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($exists > 0) {
-            return $this->error($response, 'Esta balsa já está com embarque aberto.', 409, $exists['id']);
+        if ($exists) {
+            return $this->error($response, 'Esta balsa já está com embarque aberto.', 409, $exists);
         }
 
         try {
             // Cria novo embarque
             $stmt = $pdo->prepare('INSERT INTO boardings (`ferry`, `route`, `init_time`) VALUES (?, ?, ?)');
-            $stmt->execute([
-                $ferry,
-                $route,
-                $date_in
-            ]);
+            $stmt->execute([$ferry, $route, $date_in]);
 
             $lastId = $pdo->lastInsertId();
 
@@ -49,17 +52,20 @@ class InitBoardingAction {
             return $response->withHeader('Content-Type', 'application/json');
 
         } catch (PDOException $e) {
-            return $this->error($response, 'Erro ao salvar embarque (' . $e->getCode() .  ').', 500);
+            return $this->error($response, 'Erro ao salvar embarque (' . $e->getCode() . ').', 500);
         }
     }
 
-    private function error(Response $response, string $message, int $code = 400, int $boarding_id = 0): Response {
-
-        if($boarding_id){
-            $response->getBody()->write(json_encode(['error' => $message, 'boarding_id' => $boarding_id]));
-        }else{
-            $response->getBody()->write(json_encode(['error' => $message]));
+    private function error(Response $response, string $message, int $code = 400, array $boardingData = []): Response {
+        $payload = ['error' => $message];
+        if (!empty($boardingData)) {
+            $payload['boarding_id'] = (int) $boardingData['boarding_id'];
+            $payload['ferry_name'] = $boardingData['ferry_name'];
+            $payload['route_name'] = $boardingData['route_name'];
+            $payload['time_in'] = $boardingData['time_in'];
         }
+
+        $response->getBody()->write(json_encode($payload));
         return $response->withStatus($code)->withHeader('Content-Type', 'application/json');
     }
 }
