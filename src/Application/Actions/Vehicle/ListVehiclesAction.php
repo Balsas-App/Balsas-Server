@@ -11,7 +11,8 @@ class ListVehiclesAction {
         $pdo = $GLOBALS['container']->get(PDO::class);
 
         $query = "
-            SELECT 
+            SELECT
+                v.id,
                 vc.name AS category,
                 v.name AS model,
                 v.tax AS value
@@ -39,6 +40,7 @@ class ListVehiclesAction {
             }
 
             $grouped[$type]['models'][] = [
+                'id' => $row['id'],
                 'name' => $row['model'],
                 'value' => $row['value']
             ];
