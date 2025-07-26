@@ -15,7 +15,19 @@ class GetCheckinInfoAction {
             return $this->error($response, 'ID do check-in não informado.', 400);
         }
 
-        $stmt = $pdo->prepare("SELECT * FROM checkins WHERE id = ?");
+        $stmt = $pdo->prepare("
+            SELECT 
+                c.*, 
+                f.name AS ferry_name
+            FROM 
+                checkins c
+            LEFT JOIN 
+                boardings b ON c.boarding = b.id
+            LEFT JOIN 
+                ferries f ON b.ferry = f.id
+            WHERE 
+                c.id = ?
+        ");
         $stmt->execute([$id]);
 
         $checkin = $stmt->fetch();

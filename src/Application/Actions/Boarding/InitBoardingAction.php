@@ -28,7 +28,7 @@ class InitBoardingAction {
             FROM boardings b
             JOIN ferries f ON b.ferry = f.id
             JOIN ferry_routes r ON b.route = r.id
-            WHERE b.ferry = ? AND b.departure_time IS NULL
+            WHERE b.ferry = ? AND b.closed = 0
             LIMIT 1
         ");
         $stmt->execute([$ferry]);
