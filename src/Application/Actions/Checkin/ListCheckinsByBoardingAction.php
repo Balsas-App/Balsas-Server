@@ -15,7 +15,27 @@ class ListCheckinsByBoardingAction {
             return $this->error($response, 'ID do embarque não informado.', 400);
         }
 
-        $stmt = $pdo->prepare("SELECT * FROM checkins WHERE boarding = ? ORDER BY date_in ASC");
+        $stmt = $pdo->prepare("
+            SELECT 
+                c.*,
+                f.name AS ferry_name,
+                vc.name AS vehicle_category_name,
+                vc.id AS vehicle_category_id,
+                v.name AS vehicle_name
+            FROM 
+                checkins c
+            LEFT JOIN 
+                boardings b ON c.boarding = b.id
+            LEFT JOIN 
+                ferries f ON b.ferry = f.id
+            LEFT JOIN 
+                vehicles v ON c.vehicle = v.id
+            LEFT JOIN 
+                vehicle_categories vc ON v.category = vc.id
+            WHERE
+                b.id = ?
+            ORDER BY c.date_in ASC
+        ");
         $stmt->execute([$boardingId]);
 
         $checkins = $stmt->fetchAll();

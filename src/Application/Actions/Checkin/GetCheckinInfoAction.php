@@ -17,14 +17,21 @@ class GetCheckinInfoAction {
 
         $stmt = $pdo->prepare("
             SELECT 
-                c.*, 
-                f.name AS ferry_name
+                c.*,
+                f.name AS ferry_name,
+                vc.name AS vehicle_category_name,
+                vc.id AS vehicle_category_id,
+                v.name AS vehicle_name
             FROM 
                 checkins c
             LEFT JOIN 
                 boardings b ON c.boarding = b.id
             LEFT JOIN 
                 ferries f ON b.ferry = f.id
+            LEFT JOIN 
+                vehicles v ON c.vehicle = v.id
+            LEFT JOIN 
+                vehicle_categories vc ON v.category = vc.id
             WHERE 
                 c.id = ?
         ");
