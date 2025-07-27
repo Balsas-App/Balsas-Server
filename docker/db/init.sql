@@ -92,4 +92,22 @@ CREATE TABLE `boardings` (
   CONSTRAINT `fk_ferry_route` FOREIGN KEY (`route`) REFERENCES `ferry_routes` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
+DROP TABLE IF EXISTS `checkins`;
+CREATE TABLE `checkins` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `boarding` int(10) unsigned NOT NULL,
+  `plate` varchar(100) DEFAULT NULL,
+  `pax` int(11) DEFAULT NULL,
+  `vehicle` int(10) unsigned DEFAULT NULL,
+  `value` double DEFAULT NULL,
+  `add_value` double DEFAULT NULL,
+  `observation` varchar(255) DEFAULT NULL,
+  `add_value_reason` varchar(255) DEFAULT NULL,
+  `date_in` timestamp NOT NULL DEFAULT current_timestamp(),
+  `refunded` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `fk_vehicle` (`vehicle`),
+  CONSTRAINT `fk_vehicle` FOREIGN KEY (`vehicle`) REFERENCES `vehicles` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 COMMIT;
