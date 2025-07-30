@@ -13,6 +13,8 @@ class ListBoardingsAction {
 
         $start = $params['start'] ?? null;
         $end = $params['end'] ?? null;
+        $closed = $params['closed'] ?? null;
+        $open = $params['open'] ?? null;
 
         $sql = "SELECT * FROM boardings WHERE 1";
         $bindings = [];
@@ -25,6 +27,16 @@ class ListBoardingsAction {
         if ($end) {
             $sql .= " AND init_time <= ?";
             $bindings[] = $end;
+        }
+
+        if ($closed) {
+            $sql .= " AND closed = ?";
+            $bindings[] = 1;
+        }
+
+        if ($open) {
+            $sql .= " AND closed = ?";
+            $bindings[] = 0;
         }
 
         $sql .= " ORDER BY init_time DESC";
