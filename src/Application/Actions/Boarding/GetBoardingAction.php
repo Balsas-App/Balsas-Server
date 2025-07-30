@@ -20,7 +20,8 @@ class GetBoardingAction {
                     b.init_time as time_in, 
                     f.name as ferry_name, 
                     r.route as route_name,
-                    COUNT(c.id) as checkins_count
+                    COUNT(c.id) as checkins_count,
+                    b.closed
                 FROM boardings b
                 JOIN ferries f ON b.ferry = f.id
                 JOIN ferry_routes r ON b.route = r.id
