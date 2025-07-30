@@ -6,8 +6,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use PDO;
 
-class ListVehiclesAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class ListVehiclesAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
 
         $query = "
@@ -20,7 +22,7 @@ class ListVehiclesAction {
             LEFT JOIN vehicles v ON v.category = vc.id
             ORDER BY vc.name, v.name
         ";
-        
+
         $stmt = $pdo->query($query);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

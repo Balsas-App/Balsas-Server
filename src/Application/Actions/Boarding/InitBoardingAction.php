@@ -9,8 +9,10 @@ use PDOException;
 use App\Application\Helpers\JWT;
 use Slim\Psr7\Response as SlimResponse;
 
-class InitBoardingAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class InitBoardingAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
         $data = (array) $request->getParsedBody();
 
@@ -50,13 +52,13 @@ class InitBoardingAction {
                 'boarding_id' => $lastId
             ]));
             return $response->withHeader('Content-Type', 'application/json');
-
         } catch (PDOException $e) {
             return $this->error($response, 'Erro ao salvar embarque (' . $e->getCode() . ').', 500);
         }
     }
 
-    private function error(Response $response, string $message, int $code = 400, array $boardingData = []): Response {
+    private function error(Response $response, string $message, int $code = 400, array $boardingData = []): Response
+    {
         $payload = ['error' => $message];
         if (!empty($boardingData)) {
             $payload['boarding_id'] = (int) $boardingData['boarding_id'];

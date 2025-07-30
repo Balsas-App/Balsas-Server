@@ -13,7 +13,7 @@ class JWT
     public static function generateToken(array $payload): string
     {
         $issuedAt = time();
-        $expire = $issuedAt + 60*60;
+        $expire = $issuedAt + 60 * 60;
         $payload = array_merge($payload, [
             'iat' => $issuedAt,
             'exp' => $expire,

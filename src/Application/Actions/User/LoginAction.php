@@ -7,8 +7,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use PDO;
 use App\Application\Helpers\JWT;
 
-class LoginAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class LoginAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
         $body = (array)$request->getParsedBody();
 

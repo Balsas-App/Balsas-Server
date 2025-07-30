@@ -6,8 +6,10 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use PDO;
 
-class ListCheckinsByBoardingAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class ListCheckinsByBoardingAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
         $boardingId = $args['boarding_id'] ?? null;
 
@@ -44,7 +46,8 @@ class ListCheckinsByBoardingAction {
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    private function error(Response $response, string $message, int $code): Response {
+    private function error(Response $response, string $message, int $code): Response
+    {
         $response->getBody()->write(json_encode(['error' => $message]));
         return $response->withStatus($code)->withHeader('Content-Type', 'application/json');
     }

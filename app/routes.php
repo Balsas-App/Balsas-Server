@@ -21,6 +21,7 @@ use App\Application\Actions\Boarding\InitBoardingAction;
 use App\Application\Actions\Boarding\ListRoutesAction;
 use App\Application\Actions\Boarding\ListBoardingsAction;
 use App\Application\Actions\Boarding\GetBoardingAction;
+use App\Application\Actions\Boarding\FinishBoardingAction;
 use App\Application\Actions\Checkin\CreateCheckinAction;
 use App\Application\Actions\Checkin\ListCheckinsByBoardingAction;
 use App\Application\Actions\Checkin\GetCheckinInfoAction;
@@ -68,4 +69,6 @@ return function (App $app) {
         // Obter detalhes de um check-in específico
         $group->get('/checkins/{id}', GetCheckinInfoAction::class);
     })->add(new AuthMiddleware());
+
+    $app->put('/boardings/{id}/finish', FinishBoardingAction::class)->add(new AuthMiddleware());
 };

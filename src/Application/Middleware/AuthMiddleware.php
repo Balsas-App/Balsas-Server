@@ -8,14 +8,17 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Psr7\Response as SlimResponse;
 
-class AuthMiddleware {
+class AuthMiddleware
+{
     private ?int $minLevel;
 
-    public function __construct(int $minLevel = null) {
+    public function __construct(int $minLevel = null)
+    {
         $this->minLevel = $minLevel;
     }
 
-    public function __invoke(Request $request, RequestHandler $handler): Response {
+    public function __invoke(Request $request, RequestHandler $handler): Response
+    {
         $authHeader = $request->getHeaderLine('Authorization');
 
         if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
@@ -60,15 +63,18 @@ class AuthMiddleware {
         }
     }
 
-    private function unauthorized(string $message): Response {
+    private function unauthorized(string $message): Response
+    {
         return $this->error($message, 401);
     }
 
-    private function forbidden(string $message): Response {
+    private function forbidden(string $message): Response
+    {
         return $this->error($message, 403);
     }
 
-    private function error(string $message, int $code): Response {
+    private function error(string $message, int $code): Response
+    {
         $response = new SlimResponse();
         $response->getBody()->write(json_encode(['error' => $message]));
         return $response->withStatus($code)->withHeader('Content-Type', 'application/json');

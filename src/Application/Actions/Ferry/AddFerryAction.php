@@ -8,8 +8,10 @@ use PDO;
 use App\Application\Helpers\JWT;
 use Slim\Psr7\Response as SlimResponse;
 
-class AddFerryAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class AddFerryAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
         $data = (array) $request->getParsedBody();
 
@@ -40,7 +42,8 @@ class AddFerryAction {
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    private function error(Response $response, string $message, int $code = 400): Response {
+    private function error(Response $response, string $message, int $code = 400): Response
+    {
         $response->getBody()->write(json_encode(['error' => $message]));
         return $response->withStatus($code)->withHeader('Content-Type', 'application/json');
     }

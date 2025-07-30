@@ -7,8 +7,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use PDO;
 use App\Application\Helpers\JWT;
 
-class RefreshTokenAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class RefreshTokenAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
         $body = (array)$request->getParsedBody();
         $refreshToken = $body['refresh_token'] ?? '';

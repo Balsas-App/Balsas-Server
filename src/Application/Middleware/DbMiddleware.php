@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Application\Middleware;
 
 use Psr\Http\Message\ResponseInterface as Response;
@@ -9,7 +10,6 @@ use Psr\Container\ContainerInterface;
 class DbMiddleware
 {
     private $container;
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -18,10 +18,8 @@ class DbMiddleware
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
         $pdo = $this->container->get(\PDO::class);
-
-        // Adiciona o PDO como atributo do request
+// Adiciona o PDO como atributo do request
         $request = $request->withAttribute('pdo', $pdo);
-
         return $handler->handle($request);
     }
 }

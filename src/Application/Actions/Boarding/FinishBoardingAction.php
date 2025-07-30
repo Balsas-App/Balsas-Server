@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use PDO;
 
-class GetBoardingAction
+class FinishBoardingAction
 {
     public function __invoke(Request $request, Response $response, array $args): Response
     {
@@ -17,31 +17,25 @@ class GetBoardingAction
             return $this->error($response, 'ID do embarque não informado.', 400);
         }
 
-        $sql = "SELECT 
-                    b.id as boarding_id, 
-                    b.init_time as time_in, 
-                    f.name as ferry_name, 
-                    r.route as route_name,
-                    COUNT(c.id) as checkins_count,
-                    b.closed
-                FROM boardings b
-                JOIN ferries f ON b.ferry = f.id
-                JOIN ferry_routes r ON b.route = r.id
-                LEFT JOIN checkins c ON c.boarding = b.id
-                WHERE b.id = ?
-                GROUP BY b.id, b.init_time, f.name, r.route
-                LIMIT 1";
-
-        $stmt = $pdo->prepare($sql);
+        // Verifica se o embarque existe
+        $stmt = $pdo->prepare("SELECT * FROM boardings WHERE id = ?");
         $stmt->execute([$id]);
-
         $boarding = $stmt->fetch();
 
         if (!$boarding) {
             return $this->error($response, 'Embarque não encontrado.', 404);
         }
 
-        $response->getBody()->write(json_encode($boarding));
+        // Atualiza o campo `closed` para 1
+        $update = $pdo->prepare("UPDATE boardings SET closed = 1 WHERE id = ?");
+        $update->execute([$id]);
+
+        $response->getBody()->write(json_encode([
+            'success' => true,
+            'message' => 'Embarque finalizado com sucesso.',
+            'boarding_id' => $id
+        ]));
+
         return $response->withHeader('Content-Type', 'application/json');
     }
 

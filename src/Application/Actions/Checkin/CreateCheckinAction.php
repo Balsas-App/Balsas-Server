@@ -7,8 +7,10 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use PDO;
 use PDOException;
 
-class CreateCheckinAction {
-    public function __invoke(Request $request, Response $response, array $args): Response {
+class CreateCheckinAction
+{
+    public function __invoke(Request $request, Response $response, array $args): Response
+    {
         $pdo = $GLOBALS['container']->get(PDO::class);
         $data = (array) $request->getParsedBody();
 
@@ -31,7 +33,7 @@ class CreateCheckinAction {
             $check->execute([$boarding, $plate]);
             $checkin_data = $check->fetch();
             if ($checkin_data) {
-                return $this->error($response, 'Veículo '.$plate.' já embarcado.', $checkin_data['id'], 409);
+                return $this->error($response, 'Veículo ' . $plate . ' já embarcado.', $checkin_data['id'], 409);
             }
 
             // Executa o INSERT normalmente
@@ -48,16 +50,16 @@ class CreateCheckinAction {
                 'checkin_id' => $pdo->lastInsertId()
             ]));
             return $response->withHeader('Content-Type', 'application/json');
-
         } catch (PDOException $e) {
             return $this->error($response, 'Erro ao salvar check-in (' . $e->getCode() . ')', 0, 500);
         }
     }
 
-    private function error(Response $response, string $message, int $checkin_id, int $code = 400): Response {
-        if($checkin_id){
+    private function error(Response $response, string $message, int $checkin_id, int $code = 400): Response
+    {
+        if ($checkin_id) {
             $response->getBody()->write(json_encode(['error' => $message, 'checkin_id' => $checkin_id]));
-        }else{
+        } else {
             $response->getBody()->write(json_encode(['error' => $message]));
         }
         return $response->withStatus($code)->withHeader('Content-Type', 'application/json');
