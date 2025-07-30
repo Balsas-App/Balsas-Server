@@ -52,7 +52,8 @@ class TestCase extends PHPUnit_TestCase
 
         // Register middleware
         $middleware = require __DIR__ . '/../app/middleware.php';
-        $middleware($app);
+        $container = $app->getContainer();
+        $middleware($app, $container);
 
         // Register routes
         $routes = require __DIR__ . '/../app/routes.php';
