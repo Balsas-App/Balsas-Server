@@ -24,6 +24,15 @@ class InitBoardingAction
             return $this->error($response, 'Campos obrigatórios ausentes.');
         }
 
+        $authHeader = $request->getHeaderLine('Authorization');
+        $token = str_replace('Bearer ', '', $authHeader);
+        $user = JWT::validateToken($token);
+        $user_id = $user->id ?? null;
+
+        if (!$user_id) {
+            return $this->error($response, 'Usuário não autenticado.', 401, []);
+        }
+
         // Verifica se balsa já tem embarque aberto (sem horário de saída)
         $stmt = $pdo->prepare("
             SELECT b.id as boarding_id, b.init_time as time_in, f.name as ferry_name, r.route as route_name
@@ -42,8 +51,8 @@ class InitBoardingAction
 
         try {
             // Cria novo embarque
-            $stmt = $pdo->prepare('INSERT INTO boardings (`ferry`, `route`, `init_time`) VALUES (?, ?, ?)');
-            $stmt->execute([$ferry, $route, $date_in]);
+            $stmt = $pdo->prepare('INSERT INTO boardings (`ferry`, `route`, `init_time`, `agent`) VALUES (?, ?, ?, ?)');
+            $stmt->execute([$ferry, $route, $date_in, $user_id]);
 
             $lastId = $pdo->lastInsertId();
 

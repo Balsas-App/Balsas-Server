@@ -23,10 +23,14 @@ class GetBoardingAction
                     f.name as ferry_name, 
                     r.route as route_name,
                     COUNT(c.id) as checkins_count,
-                    b.closed
+                    b.closed,
+                    b.agent as agent_id,
+                    u.username as agent_username,
+                    u.data as agent_data
                 FROM boardings b
                 JOIN ferries f ON b.ferry = f.id
                 JOIN ferry_routes r ON b.route = r.id
+                JOIN users u ON b.agent = u.id
                 LEFT JOIN checkins c ON c.boarding = b.id
                 WHERE b.id = ?
                 GROUP BY b.id, b.init_time, f.name, r.route
