@@ -36,6 +36,8 @@ services:
             DB_DATABASE: app
             DB_USERNAME: user
             DB_PASSWORD: secret
+        profiles:
+            - dev
 
     db:
         image: mariadb:11
