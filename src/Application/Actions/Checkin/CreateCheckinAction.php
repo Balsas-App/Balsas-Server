@@ -24,7 +24,7 @@ class CreateCheckinAction
         $add_value_reason = trim($data['add_value_reason'] ?? '');
 
         if (!$boarding || !$plate) {
-            return $this->error($response, 'ID de embarque e placa são obrigatórios.');
+            return $this->error($response, 'ID de embarque e placa são obrigatórios.', null, 400);
         }
 
         try {
