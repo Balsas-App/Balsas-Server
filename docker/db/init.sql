@@ -85,12 +85,15 @@ CREATE TABLE `boardings` (
   `init_time` timestamp NOT NULL DEFAULT current_timestamp(),
   `departure_time` timestamp NULL DEFAULT NULL,
   `closed` int(11) DEFAULT 0,
+  `agent` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_ferry_route` (`route`),
   KEY `fk_ferry` (`ferry`),
+  KEY `fk_user` (`agent`),
   CONSTRAINT `fk_ferry` FOREIGN KEY (`ferry`) REFERENCES `ferries` (`id`),
-  CONSTRAINT `fk_ferry_route` FOREIGN KEY (`route`) REFERENCES `ferry_routes` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+  CONSTRAINT `fk_ferry_route` FOREIGN KEY (`route`) REFERENCES `ferry_routes` (`id`),
+  CONSTRAINT `fk_user` FOREIGN KEY (`agent`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
 
 DROP TABLE IF EXISTS `checkins`;
 CREATE TABLE `checkins` (
