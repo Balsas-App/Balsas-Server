@@ -8,6 +8,7 @@ use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Application\Helpers\JWT;
 use App\Application\Middleware\AuthMiddleware;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 use App\Application\Actions\User\SetupAdminAction;
 use App\Application\Actions\User\AddUserAction;
@@ -27,6 +28,14 @@ use App\Application\Actions\Checkin\ListCheckinsByBoardingAction;
 use App\Application\Actions\Checkin\GetCheckinInfoAction;
 
 return function (App $app) {
+
+    $app->add(function (Request $request, RequestHandler $handler): Response {
+        $response = $handler->handle($request);
+        return $response
+            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    });
 
     $app->options('/{routes:.*}', function ($request, $response) {
         return $response->withHeader('Access-Control-Allow-Origin', '*')
