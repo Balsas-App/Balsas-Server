@@ -30,17 +30,19 @@ use App\Application\Actions\Checkin\GetCheckinInfoAction;
 return function (App $app) {
 
     $app->add(function (Request $request, RequestHandler $handler): Response {
+        if ($request->getMethod() === 'OPTIONS') {
+            $response = new \Slim\Psr7\Response(200);
+            return $response
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        }
+
         $response = $handler->handle($request);
         return $response
             ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    });
-
-    $app->options('/{routes:.*}', function ($request, $response) {
-        return $response->withHeader('Access-Control-Allow-Origin', '*')
-                        ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-                        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     });
 
     $app->get('/', function (Request $request, Response $response) {
