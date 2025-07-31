@@ -18,30 +18,46 @@ class ListBoardingsAction
         $closed = $params['closed'] ?? null;
         $open = $params['open'] ?? null;
 
-        $sql = "SELECT * FROM boardings WHERE 1";
+        $sql = "SELECT b.id as boarding_id, 
+            b.init_time as time_in, 
+            f.name as ferry_name, 
+            r.route as route_name,
+            COUNT(c.id) as checkins_count,
+            b.closed,
+            b.agent as agent_id,
+            u.username as agent_username,
+            u.data as agent_data
+        FROM boardings b
+        JOIN ferries f ON b.ferry = f.id
+        JOIN ferry_routes r ON b.route = r.id
+        JOIN users u ON b.agent = u.id
+        LEFT JOIN checkins c ON c.boarding = b.id
+        WHERE 1";
+        
         $bindings = [];
 
         if ($start) {
-            $sql .= " AND init_time >= ?";
+            $sql .= " AND b.init_time >= ?";
             $bindings[] = $start;
         }
 
         if ($end) {
-            $sql .= " AND init_time <= ?";
+            $sql .= " AND b.init_time <= ?";
             $bindings[] = $end;
         }
 
         if ($closed) {
-            $sql .= " AND closed = ?";
+            $sql .= " AND b.closed = ?";
             $bindings[] = 1;
         }
 
         if ($open) {
-            $sql .= " AND closed = ?";
+            $sql .= " AND b.closed = ?";
             $bindings[] = 0;
         }
 
-        $sql .= " ORDER BY init_time DESC";
+        $sql .= " GROUP BY b.id, b.init_time, f.name, r.route
+                ORDER BY b.init_time DESC";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($bindings);
