@@ -27,9 +27,11 @@ use App\Application\Actions\Checkin\ListCheckinsByBoardingAction;
 use App\Application\Actions\Checkin\GetCheckinInfoAction;
 
 return function (App $app) {
-    $app->options('/{routes:.*}', function (Request $request, Response $response) {
-        // CORS Pre-Flight OPTIONS Request Handler
-        return $response;
+
+    $app->options('/{routes:.*}', function ($request, $response) {
+        return $response->withHeader('Access-Control-Allow-Origin', '*')
+                        ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+                        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     });
 
     $app->get('/', function (Request $request, Response $response) {
