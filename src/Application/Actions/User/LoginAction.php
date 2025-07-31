@@ -37,7 +37,7 @@ class LoginAction
         $expiresAt = date('Y-m-d H:i:s', time() + 60 * 60 * 24 * 7);
 
         $stmt = $pdo->prepare("INSERT INTO tokens (user_id, token, expires_at) VALUES (?, ?, ?)");
-        $stmt->execute([$user['id'], $accessToken, date('Y-m-d H:i:s', time() + 3600)]);
+        $stmt->execute([$user['id'], $accessToken, date('Y-m-d H:i:s', time() + 3600 * 5)]);
 
         $stmt = $pdo->prepare("INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)");
         $stmt->execute([$user['id'], $refreshToken, $expiresAt]);

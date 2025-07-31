@@ -48,7 +48,7 @@ class RefreshTokenAction
             ->execute([$record['user_id'], $newRefreshToken, date('Y-m-d H:i:s', time() + 60 * 60 * 24 * 7)]);
 
         $pdo->prepare("INSERT INTO tokens (user_id, token, expires_at) VALUES (?, ?, ?)")
-            ->execute([$user['id'], $newAccessToken, date('Y-m-d H:i:s', time() + 60 * 60)]);
+            ->execute([$user['id'], $newAccessToken, date('Y-m-d H:i:s', time() + 3600 * 5)]);
 
         $response->getBody()->write(json_encode([
             'access_token' => $newAccessToken,
