@@ -33,7 +33,7 @@ class ListBoardingsAction
         JOIN users u ON b.agent = u.id
         LEFT JOIN checkins c ON c.boarding = b.id
         WHERE 1";
-        
+
         $bindings = [];
 
         if ($start) {
