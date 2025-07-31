@@ -8,7 +8,7 @@ use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Application\Helpers\JWT;
 use App\Application\Middleware\AuthMiddleware;
-use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Slim\Exception\HttpNotFoundException;
 
 use App\Application\Actions\User\SetupAdminAction;
 use App\Application\Actions\User\AddUserAction;
@@ -29,20 +29,16 @@ use App\Application\Actions\Checkin\GetCheckinInfoAction;
 
 return function (App $app) {
 
-    $app->add(function (Request $request, RequestHandler $handler): Response {
-        if ($request->getMethod() === 'OPTIONS') {
-            $response = new \Slim\Psr7\Response(200);
-            return $response
-                ->withHeader('Access-Control-Allow-Origin', '*')
-                ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        }
+    $app->options('/{routes:.+}', function ($request, $response, $args) {
+        return $response;
+    });
 
+    $app->add(function ($request, $handler) {
         $response = $handler->handle($request);
         return $response
-            ->withHeader('Access-Control-Allow-Origin', '*')
-            ->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                ->withHeader('Access-Control-Allow-Origin', '*')
+                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     });
 
     $app->get('/', function (Request $request, Response $response) {
@@ -84,4 +80,8 @@ return function (App $app) {
     })->add(new AuthMiddleware());
 
     $app->put('/boardings/{id}/finish', FinishBoardingAction::class)->add(new AuthMiddleware());
+
+    $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
+        throw new HttpNotFoundException($request);
+    });
 };
