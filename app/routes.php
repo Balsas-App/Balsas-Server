@@ -63,21 +63,12 @@ return function (App $app) {
     $app->post('/boardings', InitBoardingAction::class)->add(new AuthMiddleware());
     $app->get('/boardings/routes', ListRoutesAction::class)->add(new AuthMiddleware());
 
-    
-    $app->group('', function (Group $group) {
-        // Listar boardings (com filtro de data opcional ?start=...&end=...)
-        $group->get('/boardings', ListBoardingsAction::class);
-        $group->get('/boardings/{id}', GetBoardingAction::class);
+    $app->get('/boardings', ListBoardingsAction::class)->add(new AuthMiddleware());
+    $app->get('/boardings/{id}', GetBoardingAction::class)->add(new AuthMiddleware());
+    $app->post('/checkins', CreateCheckinAction::class)->add(new AuthMiddleware());
+    $app->get('/boardings/{boarding_id}/checkins', ListCheckinsByBoardingAction::class)->add(new AuthMiddleware());
+    $app->get('/checkins/{id}', GetCheckinInfoAction::class)->add(new AuthMiddleware());
 
-        // Criar novo check-in
-        $group->post('/checkins', CreateCheckinAction::class);
-
-        // Listar check-ins de um boarding específico
-        $group->get('/boardings/{boarding_id}/checkins', ListCheckinsByBoardingAction::class);
-
-        // Obter detalhes de um check-in específico
-        $group->get('/checkins/{id}', GetCheckinInfoAction::class);
-    })->add(new AuthMiddleware());
 
     $app->put('/boardings/{id}/finish', FinishBoardingAction::class)->add(new AuthMiddleware());
 
