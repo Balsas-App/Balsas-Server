@@ -23,6 +23,7 @@ use App\Application\Actions\Boarding\ListRoutesAction;
 use App\Application\Actions\Boarding\ListBoardingsAction;
 use App\Application\Actions\Boarding\GetBoardingAction;
 use App\Application\Actions\Boarding\FinishBoardingAction;
+use App\Application\Actions\Boarding\SendReportAction;
 use App\Application\Actions\Checkin\CreateCheckinAction;
 use App\Application\Actions\Checkin\ListCheckinsByBoardingAction;
 use App\Application\Actions\Checkin\GetCheckinInfoAction;
@@ -65,6 +66,7 @@ return function (App $app) {
 
     $app->get('/boardings', ListBoardingsAction::class)->add(new AuthMiddleware());
     $app->get('/boardings/{id}', GetBoardingAction::class)->add(new AuthMiddleware());
+    $app->get('/boardings/{id}/send-report', SendReportAction::class)->add(new AuthMiddleware());
     $app->post('/checkins', CreateCheckinAction::class)->add(new AuthMiddleware());
     $app->get('/boardings/{boarding_id}/checkins', ListCheckinsByBoardingAction::class)->add(new AuthMiddleware());
     $app->get('/checkins/{id}', GetCheckinInfoAction::class)->add(new AuthMiddleware());

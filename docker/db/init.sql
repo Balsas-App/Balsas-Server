@@ -2,8 +2,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-DROP TABLE IF EXISTS `refresh_tokens`;
-CREATE TABLE `refresh_tokens` (
+CREATE TABLE IF NOT EXISTS `refresh_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `token` varchar(512) NOT NULL,
@@ -11,10 +10,9 @@ CREATE TABLE `refresh_tokens` (
   `revoked` tinyint(1) DEFAULT 0,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-DROP TABLE IF EXISTS `tokens`;
-CREATE TABLE `tokens` (
+CREATE TABLE IF NOT EXISTS `tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `token` varchar(512) NOT NULL,
@@ -23,11 +21,9 @@ CREATE TABLE `tokens` (
   `revoked` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
@@ -36,18 +32,15 @@ CREATE TABLE `users` (
   `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`data`)),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-DROP TABLE IF EXISTS `vehicle_categories`;
-CREATE TABLE `vehicle_categories` (
+CREATE TABLE IF NOT EXISTS `vehicle_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-DROP TABLE IF EXISTS `vehicles`;
-CREATE TABLE `vehicles` (
+CREATE TABLE IF NOT EXISTS `vehicles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `category` int(11) DEFAULT NULL,
@@ -56,10 +49,9 @@ CREATE TABLE `vehicles` (
   PRIMARY KEY (`id`),
   KEY `fk_vehicle_category` (`category`),
   CONSTRAINT `fk_vehicle_category` FOREIGN KEY (`category`) REFERENCES `vehicle_categories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-DROP TABLE IF EXISTS `ferries`;
-CREATE TABLE `ferries` (
+CREATE TABLE IF NOT EXISTS `ferries` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT 1,
@@ -68,17 +60,15 @@ CREATE TABLE `ferries` (
   PRIMARY KEY (`id`),
   KEY `fk_ferries_owner` (`owner`),
   CONSTRAINT `fk_ferries_owner` FOREIGN KEY (`owner`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-DROP TABLE IF EXISTS `ferry_routes`;
-CREATE TABLE `ferry_routes` (
+CREATE TABLE IF NOT EXISTS `ferry_routes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `route` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-DROP TABLE IF EXISTS `boardings`;
-CREATE TABLE `boardings` (
+CREATE TABLE IF NOT EXISTS `boardings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ferry` int(10) unsigned DEFAULT NULL,
   `route` int(10) unsigned DEFAULT NULL,
@@ -93,10 +83,9 @@ CREATE TABLE `boardings` (
   CONSTRAINT `fk_ferry` FOREIGN KEY (`ferry`) REFERENCES `ferries` (`id`),
   CONSTRAINT `fk_ferry_route` FOREIGN KEY (`route`) REFERENCES `ferry_routes` (`id`),
   CONSTRAINT `fk_user` FOREIGN KEY (`agent`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-DROP TABLE IF EXISTS `checkins`;
-CREATE TABLE `checkins` (
+CREATE TABLE IF NOT EXISTS `checkins` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `boarding` int(10) unsigned NOT NULL,
   `plate` varchar(100) DEFAULT NULL,
@@ -111,6 +100,6 @@ CREATE TABLE `checkins` (
   PRIMARY KEY (`id`),
   KEY `fk_vehicle` (`vehicle`),
   CONSTRAINT `fk_vehicle` FOREIGN KEY (`vehicle`) REFERENCES `vehicles` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 COMMIT;

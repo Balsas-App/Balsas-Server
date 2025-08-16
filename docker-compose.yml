@@ -3,6 +3,7 @@ version: "3.7"
 volumes:
     logs:
     db_data:
+    pdf_storage: # volume persistente para PDFs
 
 services:
     slim:
@@ -10,6 +11,8 @@ services:
         working_dir: /var/www
         ports:
             - "8008:8008"
+        volumes:
+            - pdf_storage:/var/www/storage/pdfs # monta volume para PDFs
         depends_on:
             - db
         environment:
@@ -29,6 +32,7 @@ services:
         volumes:
             - .:/var/www
             - logs:/var/www/logs
+            - pdf_storage:/var/www/storage/pdfs # monta volume para PDFs
         depends_on:
             - db
         environment:
