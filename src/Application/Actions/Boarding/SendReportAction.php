@@ -21,9 +21,9 @@ class SendReportAction
         $pdf = new PdfGenerator();
         $pdf->generatePdf($id);
 
-        $response->getBody()->write(json_encode(array(
+        $response->getBody()->write(json_encode([
             "success" => true
-        )));
+        ]));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
