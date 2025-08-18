@@ -64,7 +64,7 @@ class SendReportAction
                     ],
                     [
                         'name'     => 'caption',
-                        'contents' => 'Relatório de embarque para *'.$boarding['ferry_name'].'*.', // <-- legenda
+                        'contents' => 'Relatório de embarque para *' . $boarding['ferry_name'] . '*.', // <-- legenda
                     ],
                 ],
             ]);
