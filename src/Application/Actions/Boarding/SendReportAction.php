@@ -32,7 +32,7 @@ class SendReportAction
                 LIMIT 1";
 
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$boardingId]);
+        $stmt->execute([$id]);
 
         $boarding = $stmt->fetch();
 
@@ -64,7 +64,7 @@ class SendReportAction
                     ],
                     [
                         'name'     => 'caption',
-                        'contents' => 'Segue o relatório em anexo.', // <-- legenda
+                        'contents' => 'Relatório de embarque para *'.$boarding['ferry_name'].'*.', // <-- legenda
                     ],
                 ],
             ]);
