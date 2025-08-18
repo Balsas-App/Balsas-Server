@@ -178,14 +178,38 @@ class PdfGenerator
 
     public function generatePdf(int $boardingId): string
     {
+
+        $pdo = $GLOBALS['container']->get(PDO::class);
+
+        $sql = "SELECT 
+                    b.id as boarding_id, 
+                    b.init_time as time_in, 
+                    f.name as ferry_name,
+                    f.cnpj as cnpj
+                FROM boardings b
+                JOIN ferries f ON b.ferry = f.id
+                WHERE b.id = ?
+                GROUP BY b.id, b.init_time, f.name
+                LIMIT 1";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$boardingId]);
+
+        $boarding = $stmt->fetch();
+
         $dompdf = new Dompdf();
         $table = $this->generateCheckinsTable($boardingId);
         $header = file_get_contents(__DIR__ . "/../../Assets/PdfComponents/header.html");
         $body = file_get_contents(__DIR__ . "/../../Assets/PdfComponents/body.html");
         $dompdf->set_option("isPhpEnabled", true);
+
         $header_args = [
             "page-break-before: always;" => "",
+            "{{date}}" => $boarding['time_in'],
+            "{{ferry}}" => $boarding['ferry_name'],
+            "{{cnpj}}" => $boarding['cnpj']
         ];
+
         $documentTemplate = str_replace(array_keys($header_args), array_values($header_args), $header);
         $documentTemplate .= $table;
         $html = str_replace("{{body}}", $documentTemplate, $body);
@@ -193,7 +217,7 @@ class PdfGenerator
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         $output = $dompdf->output();
-        $fileName = uniqid('report_', true) . ".pdf";
+        $fileName = "Embarque-{$boarding['ferry_name']}-{$boarding['boarding_id']}.pdf";
         $filePath = __DIR__ . "/../../../public/storage/pdfs/" . $fileName;
         $dir = dirname($filePath);
         if (!is_dir($dir)) {

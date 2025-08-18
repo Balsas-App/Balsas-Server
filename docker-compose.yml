@@ -22,6 +22,8 @@ services:
             DB_PASSWORD: secret
         profiles:
             - prod
+        networks:
+            - balsasnet
 
     slim-dev:
         build: .
@@ -42,6 +44,8 @@ services:
             DB_PASSWORD: secret
         profiles:
             - dev
+        networks:
+            - balsasnet
 
     db:
         image: mariadb:11
@@ -56,3 +60,9 @@ services:
             - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
         ports:
             - "3307:3306"
+        networks:
+            - balsasnet
+
+networks:
+    balsasnet:
+        external: true
